@@ -18,7 +18,7 @@ You get the following controls:
 
 ![alt tag](https://cloud.githubusercontent.com/assets/13844285/23100244/25737f14-f64a-11e6-8c43-9717b01ced71.png)
 
-You can also create your own ReorderableDrawer to change the way to display the element field. For example this is drawn by the class below:
+You can also create your own ReorderableDrawer to change the way to display each element. For example, the following iamge is drawn by the class below:
 
 ![alt tag](https://cloud.githubusercontent.com/assets/13844285/23100293/77817832-f64b-11e6-8e69-dd9eb83118ec.png)
 
