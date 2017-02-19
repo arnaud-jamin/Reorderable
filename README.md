@@ -1,6 +1,6 @@
 # Reorderable
-Tool for the Unity Editor to quickly have reorderable list by using a simple custom attribute, instead of having to create a custom editor
 
+In the Unity editor reorderable list are prefered over the default array/list inspector. But to use reorderable list, it is required to create a custom editor. It is not always convenient to do so, because if forces to manage all the others properties of the object through the custom editor. This tool let you quickly get reorderable list by using a simple custom attribute, instead of having to create a custom editor. 
 
 By adding the [Reorderable] attribute ...
 ```cs
