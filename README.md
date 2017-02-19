@@ -16,10 +16,10 @@ You get the following controls:
  - Add Element 
  - Remove Element 
 
-Collpased:
+- Collpased:
 ![alt tag](https://cloud.githubusercontent.com/assets/13844285/23100441/8cc90d24-f64e-11e6-9041-1619f49a61bf.png)
 
-Open:
+- Open:
 ![alt tag](https://cloud.githubusercontent.com/assets/13844285/23100244/25737f14-f64a-11e6-8c43-9717b01ced71.png)
 
 You can also create your own ReorderableDrawer to change the way to display each element. For example, the following image is drawn by the class below:
