@@ -8,22 +8,13 @@ public class MyBehaviorB : MyBehaviorA
     public class MyItemB : MyItemA
     {
         [Range(0, 1)]
-        public float time;
+        [SerializeField]
+        private float m_time;
     }
-
-    [Serializable]
-    public class MyInnerClass3
-    {
-        [Reorderable]
-        public MyItemB[] myArray = null;
-    }
-
-    [Reorderable]
-    public MyItemB[] publicArray3 = null;
 
     [Reorderable]
     [SerializeField]
-    private MyItemB[] privateArray3 = null;
+    private MyItemB[] anotherArrayWithAttribute = null;
 
-    public MyItemB[] PrivateArray3 { get { return privateArray3; } } // to remove warnigs
+    public MyItemB[] AnotherArrayWithAttribute { get { return anotherArrayWithAttribute; } } // to remove warnigs
 }

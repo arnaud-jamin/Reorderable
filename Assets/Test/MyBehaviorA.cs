@@ -25,57 +25,40 @@ public class MyBehaviorA : MonoBehaviour
     [Serializable]
     public class MyInnerClass1
     {
-        // Test a public list in field in a field
-        public List<MyItemA> publicList = null;
-
-        // Test a private list in field in a field
         [SerializeField]
-        private List<MyItemA> privateList = null;
+        private List<MyItemA> listInMultipleFields = null;
 
-        public List<MyItemA> PrivateList { get { return privateList; } } // to remove warnigs
+        public List<MyItemA> List { get { return listInMultipleFields; } } // to remove warnigs
     }
 
     [Serializable]
     public class MyInnerClass2
     {
-        // Test a field in a field
         [SerializeField]
-        private MyInnerClass1 privateField = null;
+        private MyInnerClass1 m_anothField = null;
 
-        // Test a public array in a base class
-        public MyItemA[] publicArrayInField = null;
-
-        // Test a public array in a base class
         [SerializeField]
-        private MyItemA[] privateArrayInField = null;
+        private MyItemA[] m_arrayInField = null;
 
-        public MyInnerClass1 PrivateField { get { return privateField; } } // to remove warnigs
-        public MyItemA[] PrivateArrayInField { get { return privateArrayInField; } } // to remove warnigs
+        public MyInnerClass1 AnothField { get { return m_anothField; } } // to remove warnigs
+        public MyItemA[] ArrayInField { get { return m_arrayInField; } } // to remove warnigs
     }
 
-    public MyItemA[] publicArrayWithCustomDrawer = null;
-
-    // Test a private array in a base class
-    [SerializeField]
-    private MyItemA[] privateArrayWithCustomDrawer = null;
-
-    // Test a public array in a base class with attribute
-    [Reorderable]
-    public MyItemA[] publicArrayWithAttribute = null;
-
-    // Test a private array in a base class with attribute
     [SerializeField]
     [Reorderable]
-    private MyItemA[] privateArrayWithAttribute = null;
+    private MyItemA[] m_arrayWithAttribute = null;
 
-    // Test a public field in a base class
-    public MyInnerClass2 publicField;
-
-    // Test a private field in a base class
     [SerializeField]
-    private MyInnerClass2 privateField = null;
+    private MyItemA[] m_arrayWithCustomDrawer = null;
 
-    public MyItemA[] PrivateArray { get { return privateArrayWithCustomDrawer; } } // to remove warnigs
-    public MyItemA[] PrivateArray2 { get { return privateArrayWithAttribute; } } // to remove warnigs
-    public MyInnerClass2 PrivateField { get { return privateField; } } // to remove warnigs
+    [SerializeField]
+    private List<MyItemA> m_listWithCustomDrawer = null;
+
+    [SerializeField]
+    private MyInnerClass2 field = null;
+
+    public MyItemA[] ArrayWithAttribute { get { return m_arrayWithAttribute; } } // to remove warnigs
+    public MyItemA[] ArrayWithCustomDrawer { get { return m_arrayWithCustomDrawer; } } // to remove warnigs
+    public List<MyItemA> ListWithCustomDrawer { get { return m_listWithCustomDrawer; } } // to remove warnigs
+    public MyInnerClass2 PrivateField { get { return field; } } // to re move warnigs
 }

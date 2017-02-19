@@ -285,10 +285,10 @@ public class ReorderableDrawer : PropertyDrawer
                 type = field.FieldType;
             }
         }
-        
+
         // We only support List and Arrays
         var value = field.GetValue(instance);
-        if (value is Array == false || value is IList == false)
+        if ((value is Array || value is IList) == false)
             return null;
 
         return new ArrayFieldInfo { arrayOwner = instance, arrayFieldInfo = field, elementIndex = elementIndex };

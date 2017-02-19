@@ -205,17 +205,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5d64f96885ff494ebec875194cee9f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  publicArrayWithCustomDrawer:
-  - m_name: a
-    m_value: 1
-    m_color: {r: 1, g: 0, b: 0, a: 0}
-  - m_name: b
-    m_value: 2
-    m_color: {r: 0.15862082, g: 1, b: 0, a: 0}
-  - m_name: c
-    m_value: 3
-    m_color: {r: 0, g: 0.04827571, b: 1, a: 0}
-  privateArrayWithCustomDrawer:
+  m_arrayWithAttribute:
   - m_name: a
     m_value: 1
     m_color: {r: 1, g: 0, b: 0, a: 0}
@@ -225,7 +215,7 @@ MonoBehaviour:
   - m_name: c
     m_value: 3
     m_color: {r: 0, g: 0, b: 1, a: 0}
-  publicArrayWithAttribute:
+  m_arrayWithCustomDrawer:
   - m_name: a
     m_value: 1
     m_color: {r: 1, g: 0, b: 0, a: 0}
@@ -235,126 +225,51 @@ MonoBehaviour:
   - m_name: c
     m_value: 3
     m_color: {r: 0, g: 0, b: 1, a: 0}
-  privateArrayWithAttribute:
+  m_listWithCustomDrawer:
   - m_name: a
-    m_value: 1
+    m_value: 10
     m_color: {r: 1, g: 0, b: 0, a: 0}
   - m_name: b
-    m_value: 2
+    m_value: 20
     m_color: {r: 0, g: 1, b: 0, a: 0}
   - m_name: c
-    m_value: 3
+    m_value: 30
     m_color: {r: 0, g: 0, b: 1, a: 0}
-  publicField:
-    privateField:
-      publicList:
+  field:
+    m_anothField:
+      listInMultipleFields:
       - m_name: a
-        m_value: 0
+        m_value: 10
         m_color: {r: 1, g: 0, b: 0, a: 0}
       - m_name: b
-        m_value: 0
-        m_color: {r: 0, g: 1, b: 0.13103461, a: 0}
-      - m_name: c
-        m_value: 0
-        m_color: {r: 0.034482475, g: 0, b: 1, a: 0}
-      privateList:
-      - m_name: a
-        m_value: 0
-        m_color: {r: 1, g: 0, b: 0, a: 0}
-      - m_name: b
-        m_value: 0
-        m_color: {r: 0.07586217, g: 1, b: 0, a: 0}
-      - m_name: c
-        m_value: 0
-        m_color: {r: 0, g: 0.08965492, b: 1, a: 0}
-    publicArrayInField:
-    - m_name: a
-      m_value: 0
-      m_color: {r: 1, g: 0, b: 0, a: 0}
-    - m_name: b
-      m_value: 0
-      m_color: {r: 0, g: 1, b: 0, a: 0}
-    - m_name: c
-      m_value: 0
-      m_color: {r: 0, g: 0, b: 1, a: 0}
-    privateArrayInField:
-    - m_name: a
-      m_value: 0
-      m_color: {r: 1, g: 0, b: 0, a: 0}
-    - m_name: b
-      m_value: 0
-      m_color: {r: 0, g: 1, b: 0, a: 0}
-    - m_name: c
-      m_value: 0
-      m_color: {r: 0, g: 0, b: 1, a: 0}
-  privateField:
-    privateField:
-      publicList:
-      - m_name: a
-        m_value: 0
-        m_color: {r: 1, g: 0, b: 0, a: 0}
-      - m_name: b
-        m_value: 0
+        m_value: 20
         m_color: {r: 0, g: 1, b: 0, a: 0}
       - m_name: c
-        m_value: 0
+        m_value: 30
         m_color: {r: 0, g: 0, b: 1, a: 0}
-      privateList:
-      - m_name: a
-        m_value: 0
-        m_color: {r: 1, g: 0, b: 0, a: 0}
-      - m_name: b
-        m_value: 0
-        m_color: {r: 0, g: 1, b: 0, a: 0}
-      - m_name: c
-        m_value: 0
-        m_color: {r: 0, g: 0, b: 1, a: 0}
-    publicArrayInField:
+    m_arrayInField:
     - m_name: a
-      m_value: 0
+      m_value: 10
       m_color: {r: 1, g: 0, b: 0, a: 0}
     - m_name: b
-      m_value: 0
+      m_value: 20
       m_color: {r: 0, g: 1, b: 0, a: 0}
     - m_name: c
-      m_value: 0
+      m_value: 30
       m_color: {r: 0, g: 0, b: 1, a: 0}
-    privateArrayInField:
-    - m_name: a
-      m_value: 0
-      m_color: {r: 1, g: 0, b: 0, a: 0}
-    - m_name: b
-      m_value: 0
-      m_color: {r: 0, g: 1, b: 0, a: 0}
-    - m_name: c
-      m_value: 0
-      m_color: {r: 0, g: 0, b: 1, a: 0}
-  publicArray3:
+  anotherArrayWithAttribute:
   - m_name: a
-    m_value: 0
-    m_color: {r: 0, g: 0, b: 0, a: 0}
-    time: 0
+    m_value: 10
+    m_color: {r: 1, g: 0, b: 0, a: 0}
+    m_time: 0.229
   - m_name: b
-    m_value: 0
-    m_color: {r: 0, g: 0, b: 0, a: 0}
-    time: 0
+    m_value: 20
+    m_color: {r: 0, g: 1, b: 0, a: 0}
+    m_time: 0.526
   - m_name: c
-    m_value: 0
-    m_color: {r: 0, g: 0, b: 0, a: 0}
-    time: 0
-  privateArray3:
-  - m_name: a
-    m_value: 0
-    m_color: {r: 0, g: 0, b: 0, a: 0}
-    time: 0
-  - m_name: b
-    m_value: 0
-    m_color: {r: 0, g: 0, b: 0, a: 0}
-    time: 0
-  - m_name: c
-    m_value: 0
-    m_color: {r: 0, g: 0, b: 0, a: 0}
-    time: 0
+    m_value: 30
+    m_color: {r: 0, g: 0, b: 1, a: 0}
+    m_time: 0.873
 --- !u!4 &1496701496
 Transform:
   m_ObjectHideFlags: 0
