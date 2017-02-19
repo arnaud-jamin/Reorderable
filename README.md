@@ -16,11 +16,11 @@ You get the following controls:
  - Add Element 
  - Remove Element 
 
-- Collpased:
+- **Collpased**:
 
-![alt tag](https://cloud.githubusercontent.com/assets/13844285/23100441/8cc90d24-f64e-11e6-9041-1619f49a61bf.png)
+![alt tag](https://cloud.githubusercontent.com/assets/13844285/23100455/1410a36e-f64f-11e6-8d53-19814474632f.png)
 
-- Open:
+- **Open**:
 
 ![alt tag](https://cloud.githubusercontent.com/assets/13844285/23100244/25737f14-f64a-11e6-8c43-9717b01ced71.png)
 
