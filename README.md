@@ -37,7 +37,6 @@ public class MyCustomDrawer : ReorderableDrawer
         m_showAdd = true;
         m_showDelete = true;
         m_showOrder = true;
-        m_showBox = true;
         base.OnGUI(rect, property, label);
     }
 
