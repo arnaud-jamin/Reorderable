@@ -16,7 +16,7 @@ You get the following controls (Drag and drop is not supported):
  - Add Element 
  - Remove Element 
 
-This is how the array looks when collpased:
+This is how the array and controls looks when collpased:
 
 ![alt tag](https://cloud.githubusercontent.com/assets/13844285/23100455/1410a36e-f64f-11e6-8d53-19814474632f.png)
 
