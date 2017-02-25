@@ -218,13 +218,13 @@ MonoBehaviour:
   m_arrayWithCustomDrawer:
   - m_name: a
     m_value: 1
-    m_color: {r: 1, g: 0, b: 0, a: 0}
+    m_color: {r: 1, g: 0, b: 0, a: 1}
   - m_name: b
     m_value: 2
-    m_color: {r: 0, g: 1, b: 0, a: 0}
+    m_color: {r: 0, g: 1, b: 0, a: 1}
   - m_name: c
     m_value: 3
-    m_color: {r: 0, g: 0, b: 1, a: 0}
+    m_color: {r: 0, g: 0, b: 1, a: 1}
   m_listWithCustomDrawer:
   - m_name: a
     m_value: 10
@@ -232,44 +232,51 @@ MonoBehaviour:
   - m_name: b
     m_value: 20
     m_color: {r: 0, g: 1, b: 0, a: 0}
-  - m_name: c
-    m_value: 30
-    m_color: {r: 0, g: 0, b: 1, a: 0}
+  m_listOfSimpleType:
+  - 100
+  - 200
+  - 300
   field:
-    m_anothField:
-      listInMultipleFields:
+    m_anotherField:
+      listInSubFields:
       - m_name: a
-        m_value: 10
+        m_value: 0
         m_color: {r: 1, g: 0, b: 0, a: 0}
       - m_name: b
-        m_value: 20
+        m_value: 0
         m_color: {r: 0, g: 1, b: 0, a: 0}
       - m_name: c
-        m_value: 30
+        m_value: 0
         m_color: {r: 0, g: 0, b: 1, a: 0}
-    m_arrayInField:
+    m_arrayInAField:
     - m_name: a
-      m_value: 10
+      m_value: 0
       m_color: {r: 1, g: 0, b: 0, a: 0}
     - m_name: b
-      m_value: 20
+      m_value: 0
       m_color: {r: 0, g: 1, b: 0, a: 0}
     - m_name: c
-      m_value: 30
+      m_value: 0
       m_color: {r: 0, g: 0, b: 1, a: 0}
   anotherArrayWithAttribute:
   - m_name: a
     m_value: 10
     m_color: {r: 1, g: 0, b: 0, a: 0}
-    m_time: 0.229
+    time: 0
+    arrayInArray:
+    - name: aa
+    - name: bb
+    - name: cc
   - m_name: b
     m_value: 20
     m_color: {r: 0, g: 1, b: 0, a: 0}
-    m_time: 0.526
+    time: 0
+    arrayInArray: []
   - m_name: c
     m_value: 30
     m_color: {r: 0, g: 0, b: 1, a: 0}
-    m_time: 0.873
+    time: 0
+    arrayInArray: []
 --- !u!4 &1496701496
 Transform:
   m_ObjectHideFlags: 0

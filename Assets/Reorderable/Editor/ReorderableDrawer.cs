@@ -8,11 +8,22 @@ using System.Collections.Generic;
 public class ReorderableDrawer : PropertyDrawer
 {
     // --------------------------------------------------------------------------------------------
-    private class ArrayFieldInfo
+    protected enum CollectionType
     {
+        Array,
+        List
+    }
+
+    // --------------------------------------------------------------------------------------------
+    protected class ArrayFieldInfo
+    {
+        public SerializedProperty property;
         public object arrayOwner;
+        public CollectionType collectionType;
         public FieldInfo arrayFieldInfo;
+        public Type elementType;
         public int elementIndex;
+        public bool isElementSimpleType;
     }
 
     // --------------------------------------------------------------------------------------------
@@ -22,43 +33,115 @@ public class ReorderableDrawer : PropertyDrawer
     protected bool m_showDelete = true;
     protected bool m_showOrder = true;
     protected bool m_showBox = true;
-    private Color m_buttonsColor = new Color(0.7f, 0.7f, 0.7f, 0.4f);
+    private Color m_buttonsDarkSkinColor = new Color(0.7f, 0.7f, 0.7f, 0.6f);
+    private Color m_buttonsLightSkinColor = new Color(0.7f, 0.7f, 0.7f, 0.4f);
+    protected ArrayFieldInfo m_info = null;
+
+    // --------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Override to define the array header height
+    /// </summary>
+    /// <param name="property"></param>
+    /// <param name="label"></param>
+    /// <returns>The header height</returns>
+    protected virtual float GetHeaderHeight(SerializedProperty property, GUIContent label)
+    {
+        return 0;
+    }
+
+    // --------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Override to draw the array header
+    /// </summary>
+    /// <param name="property"></param>
+    /// <param name="label"></param>
+    /// <returns></returns>
+    protected virtual void DrawHeader(Rect propertyRect, Rect headerRect, SerializedProperty property, GUIContent label)
+    {
+    }
+
+    // --------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Override to define an array element height
+    /// </summary>
+    /// <param name="property"></param>
+    /// <param name="label"></param>
+    /// <returns>The element height</returns>
+    protected virtual float GetElementHeight(SerializedProperty property, GUIContent label)
+    {
+        return EditorGUI.GetPropertyHeight(property, label, true);
+    }
+
+    // --------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Override to draw an array element
+    /// </summary>
+    /// <param name="property"></param>
+    /// <param name="label"></param>
+    /// <returns></returns>
+    protected virtual void DrawElement(Rect propertyRect, Rect elementRect, SerializedProperty property, GUIContent label)
+    {
+        var rect = m_info.isElementSimpleType ? elementRect : propertyRect;
+        EditorGUI.PropertyField(rect, property, label, true);
+    }
 
     // --------------------------------------------------------------------------------------------
     public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label)
     {
         EditorGUI.BeginProperty(rect, label, property);
-        var headerRect = DrawReorderableButtons(rect, property);
-        DrawProperty(rect, headerRect, property, label);
+
+        m_info = GetArrayFieldInfo(property);
+        if (m_info == null)
+            return;
+
+        var headerHeight = GetHeaderHeight(property, label);
+
+        var elementRect = rect;
+        elementRect.y += (m_info.elementIndex == 0) ? headerHeight : 0;
+
+        // Draw reorderable buttons first because we want to know their size, so the drawHeader 
+        // method can properly adjust the position of its content.
+        elementRect = DrawReorderableButtons(elementRect, property);
+
+        // Draw the header if it's the first element.
+        if (m_info.elementIndex == 0)
+        {
+            var headerRect = new Rect(elementRect.x, elementRect.y - headerHeight, elementRect.width, headerHeight);
+            DrawHeader(rect, headerRect, property, label);
+            elementRect.height -= headerHeight;
+        }
+
+        DrawElement(rect, elementRect, property, label);
+
         EditorGUI.EndProperty();
     }
 
     // --------------------------------------------------------------------------------------------
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
-        return EditorGUI.GetPropertyHeight(property, label, true);
-    }
+        m_info = GetArrayFieldInfo(property);
+        if (m_info == null)
+            return 0;
 
-    // --------------------------------------------------------------------------------------------
-    protected virtual void DrawProperty(Rect propertyRect, Rect headerRect, SerializedProperty property, GUIContent label)
-    {
-        EditorGUI.PropertyField(propertyRect, property, label, true);
+        var height = GetElementHeight(property, label);
+        if (m_info.elementIndex == 0)
+        {
+            height += GetHeaderHeight(property, label);
+        }
+
+        return height;
     }
 
     // --------------------------------------------------------------------------------------------
     protected Rect DrawReorderableButtons(Rect rect, SerializedProperty property)
     {
-        var info = GetArrayFieldInfo(property);
-        if (info == null)
-            return rect;
-
         var buttonCount = 0;
         buttonCount += (m_showOrder) ? 2 : 0;
         buttonCount += (m_showAdd) ? 1 : 0;
         buttonCount += (m_showDelete) ? 1 : 0;
         var buttonIndex = 0;
 
-        GUI.backgroundColor = m_buttonsColor;
+        GUI.backgroundColor = EditorGUIUtility.isProSkin ? m_buttonsDarkSkinColor : m_buttonsLightSkinColor;
         var buttonRect = new Rect(rect.x + rect.width - m_buttonWidth * buttonCount, rect.y, m_buttonWidth, m_buttonHeight);
 
         // ----------------------------------------------------------------------------------------
@@ -71,7 +154,7 @@ public class ReorderableDrawer : PropertyDrawer
             if (GUI.Button(buttonRect, new GUIContent("\u25B2", "Ctrl+Click: move to top"), GetButtonStyle(buttonIndex, buttonCount)))
             {
                 Undo.RecordObject(property.serializedObject.targetObject, "Reorder Element");
-                ReorderElement(property, isCtrlPressed ? int.MinValue : -1);
+                ReorderElement(m_info, isCtrlPressed ? int.MinValue : -1);
             }
             buttonIndex++;
             buttonRect.x += m_buttonWidth;
@@ -79,7 +162,7 @@ public class ReorderableDrawer : PropertyDrawer
             if (GUI.Button(buttonRect, new GUIContent("\u25BC", "Ctrl+Click: move to bottom"), GetButtonStyle(buttonIndex, buttonCount)))
             {
                 Undo.RecordObject(property.serializedObject.targetObject, "Reorder Element");
-                ReorderElement(property, isCtrlPressed ? int.MaxValue : 1);
+                ReorderElement(m_info, isCtrlPressed ? int.MaxValue : 1);
             }
             buttonIndex++;
             buttonRect.x += m_buttonWidth;
@@ -93,7 +176,7 @@ public class ReorderableDrawer : PropertyDrawer
             if (GUI.Button(buttonRect, new GUIContent("+"), GetButtonStyle(buttonIndex, buttonCount)))
             {
                 Undo.RecordObject(property.serializedObject.targetObject, "Add Element");
-                InsertElement(property, info);
+                InsertElement(m_info);
             }
             buttonRect.x += m_buttonWidth;
             buttonIndex++;
@@ -107,7 +190,7 @@ public class ReorderableDrawer : PropertyDrawer
             if (GUI.Button(buttonRect, new GUIContent("x"), GetButtonStyle(buttonIndex, buttonCount)))
             {
                 Undo.RecordObject(property.serializedObject.targetObject, "Delete Element");
-                DeleteElement(property, info);
+                DeleteElement(m_info);
             }
             buttonRect.x += m_buttonWidth;
             buttonIndex++;
@@ -132,26 +215,23 @@ public class ReorderableDrawer : PropertyDrawer
     }
 
     // --------------------------------------------------------------------------------------------
-    public static void ReorderElement(SerializedProperty property, int offset)
+    private static void ReorderElement(ArrayFieldInfo info, int offset)
     {
-        var info = GetArrayFieldInfo(property);
         var value = info.arrayFieldInfo.GetValue(info.arrayOwner);
-        var fieldType = info.arrayFieldInfo.FieldType;
 
-        if (value is Array)
+        if (info.collectionType == CollectionType.Array)
         {
             var array = value as Array;
             var newIndex = Mathf.Clamp(info.elementIndex + offset, 0, array.Length - 1);
             var element = array.GetValue(info.elementIndex);
-            var elementType = fieldType.GetElementType();
 
             // We don't simply swap the elements because the offset is not always 1 or -1
             // This function is also used to put elements on top or to the bottom.
-            array = ArrayRemove(elementType, array, info.elementIndex);
-            array = ArrayInsert(elementType, array, newIndex, element);
+            array = ArrayRemove(info.elementType, array, info.elementIndex);
+            array = ArrayInsert(info.elementType, array, newIndex, element);
             info.arrayFieldInfo.SetValue(info.arrayOwner, array);
         }
-        else if (value is IList)
+        else if (info.collectionType == CollectionType.List)
         {
             var list = value as IList;
             var newIndex = Mathf.Clamp(info.elementIndex + offset, 0, list.Count - 1);
@@ -162,43 +242,35 @@ public class ReorderableDrawer : PropertyDrawer
     }
 
     // --------------------------------------------------------------------------------------------
-    private static void InsertElement(SerializedProperty property, ArrayFieldInfo info)
+    private static void InsertElement(ArrayFieldInfo info)
     {
         var value = info.arrayFieldInfo.GetValue(info.arrayOwner);
-        var fieldType = info.arrayFieldInfo.FieldType;
 
-        if (value is Array)
+        if (info.collectionType == CollectionType.Array)
         {
-            var elementType = fieldType.GetElementType();
-            var newInstance = Activator.CreateInstance(elementType);
-            var array = value as Array;
-            array = ArrayInsert(elementType, array, info.elementIndex + 1, newInstance);
+            var newInstance = Activator.CreateInstance(info.elementType);
+            var array = ArrayInsert(info.elementType, value as Array, info.elementIndex + 1, newInstance);
             info.arrayFieldInfo.SetValue(info.arrayOwner, array);
         }
-        else if (value is IList)
+        else if (info.collectionType == CollectionType.List)
         {
-            if (fieldType.IsGenericType && fieldType.GetGenericTypeDefinition() == typeof(List<>))
-            {
-                var elementType = fieldType.GetGenericArguments()[0];
-                var newInstance = Activator.CreateInstance(elementType);
-                var list = value as IList;
-                list.Insert(info.elementIndex + 1, newInstance);
-            }
+            var newInstance = Activator.CreateInstance(info.elementType);
+            var list = value as IList;
+            list.Insert(info.elementIndex + 1, newInstance);
         }
     }
 
     // --------------------------------------------------------------------------------------------
-    private static void DeleteElement(SerializedProperty property, ArrayFieldInfo info)
+    private static void DeleteElement(ArrayFieldInfo info)
     {
         var value = info.arrayFieldInfo.GetValue(info.arrayOwner);
 
-        if (value is Array)
+        if (info.collectionType == CollectionType.Array)
         {
-            var array = value as Array;
-            array = ArrayRemove(info.arrayFieldInfo.FieldType.GetElementType(), array, info.elementIndex);
+            var array = ArrayRemove(info.elementType, value as Array, info.elementIndex);
             info.arrayFieldInfo.SetValue(info.arrayOwner, array);
         }
-        else if (value is IList)
+        else if (info.collectionType == CollectionType.List)
         {
             var list = value as IList;
             list.RemoveAt(info.elementIndex);
@@ -242,12 +314,16 @@ public class ReorderableDrawer : PropertyDrawer
     }
 
     // --------------------------------------------------------------------------------------------
-    private static ArrayFieldInfo GetArrayFieldInfo(SerializedProperty property)
+    protected static ArrayFieldInfo GetArrayFieldInfo(SerializedProperty property)
     {
-        // The property path should be somthing like : "myField.mySubField.myArray.Array.data[3]"
-
+        // The property path can be something like : "myField.myFieldsArray1.Array.data[1].mySubField.myFieldsArray2.Array.data[3]"
         var arrayPrefix = "Array.data[";
-        var arrayPrefixIndex = property.propertyPath.IndexOf(arrayPrefix);
+
+        var arrayPrefixIndex = property.propertyPath.LastIndexOf(arrayPrefix);
+        if (arrayPrefixIndex < 0)
+            return null;
+
+        // Find 3 in "myField.myFieldsArray1.Array.data[1].mySubField.myFieldsArray2.Array.data[3]"
         var elementIndexStr = property.propertyPath.Substring(arrayPrefixIndex + arrayPrefix.Length, property.propertyPath.Length - arrayPrefixIndex - arrayPrefix.Length - 1);
         var elementIndex = -1;
         if (int.TryParse(elementIndexStr, out elementIndex) == false)
@@ -256,14 +332,41 @@ public class ReorderableDrawer : PropertyDrawer
         // Run through the subField fields since the array might be inside multiple sub classes
         var fieldPath = property.propertyPath.Substring(0, arrayPrefixIndex - 1);
         var paths = fieldPath.Split('.');
-        var type = property.serializedObject.targetObject.GetType();
 
         object instance = property.serializedObject.targetObject;
+        var type = instance.GetType();
+
         FieldInfo field = null;
 
         for (var i = 0; i < paths.Length; ++i)
         {
             var fieldName = paths[i];
+
+            // We can enounter multiple arrays
+            bool isArray = instance is Array;
+            bool isList = field != null && field.FieldType.IsGenericType && field.FieldType.GetGenericTypeDefinition() == typeof(List<>);
+            if (isArray || isList)
+            {
+                fieldName = paths[++i];
+                var arrayIndexPrefix = fieldName.IndexOf("[");
+                var arrayIndexStr = fieldName.Substring(arrayIndexPrefix + 1, fieldName.Length - (arrayIndexPrefix + 1) - 1);
+                var arrayIndex = -1;
+                if (int.TryParse(arrayIndexStr, out arrayIndex) == false)
+                    return null;
+
+                if (isArray)
+                {
+                    fieldName = paths[++i];
+                    type = field.FieldType.GetElementType();
+                    instance = (instance as Array).GetValue(arrayIndex);
+                }
+                else if (isList)
+                {
+                    fieldName = paths[++i];
+                    type = field.FieldType.GetGenericArguments()[0];
+                    instance = (instance as IList)[arrayIndex];
+                }
+            }
 
             // Iterate over the base type because GetField returns null if the field is private inside a base class.
             var baseType = type;
@@ -288,9 +391,48 @@ public class ReorderableDrawer : PropertyDrawer
 
         // We only support List and Arrays
         var value = field.GetValue(instance);
-        if ((value is Array || value is IList) == false)
-            return null;
+        CollectionType collectionType;
+        Type elementType;
 
-        return new ArrayFieldInfo { arrayOwner = instance, arrayFieldInfo = field, elementIndex = elementIndex };
+        if (value is Array)
+        {
+            collectionType = CollectionType.Array;
+            elementType = field.FieldType.GetElementType();
+        }
+        else if (field.FieldType.IsGenericType && field.FieldType.GetGenericTypeDefinition() == typeof(List<>))
+        {
+            collectionType = CollectionType.List;
+            elementType = field.FieldType.GetGenericArguments()[0];
+        }
+        else
+        {
+            return null;
+        }
+
+        return new ArrayFieldInfo
+        {
+            property = property,
+            arrayOwner = instance,
+            collectionType = collectionType,
+            arrayFieldInfo = field,
+            elementType = elementType,
+            elementIndex = elementIndex,
+            isElementSimpleType = IsSimpleType(elementType),
+        };
+    }
+
+    // --------------------------------------------------------------------------------------------
+    private static bool IsSimpleType(Type type)
+    {
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+        {
+            // nullable type, check if the nested type is simple.
+            return IsSimpleType(type.GetGenericArguments()[0]);
+        }
+        return type.IsPrimitive
+            || type.IsEnum
+            || typeof(UnityEngine.Object).IsAssignableFrom(type)
+            || type.Equals(typeof(string))
+            || type.Equals(typeof(decimal));
     }
 }

@@ -17,31 +17,31 @@ public class MyBehaviorA : MonoBehaviour
         [SerializeField]
         private Color m_color = Color.white;
 
-        public string Name { get { return m_name; } } // to remove warnigs
-        public int Value { get { return m_value; } } // to remove warnigs
-        public Color Color { get { return m_color; } } // to remove warnigs
+        public string Name { get { return m_name; } }
+        public int Value { get { return m_value; } }
+        public Color Color { get { return m_color; } }
     }
 
     [Serializable]
     public class MyInnerClass1
     {
         [SerializeField]
-        private List<MyItemA> listInMultipleFields = null;
+        private List<MyItemA> listInSubFields = null;
 
-        public List<MyItemA> List { get { return listInMultipleFields; } } // to remove warnigs
+        public List<MyItemA> List { get { return listInSubFields; } }
     }
 
     [Serializable]
     public class MyInnerClass2
     {
         [SerializeField]
-        private MyInnerClass1 m_anothField = null;
+        private MyInnerClass1 m_anotherField = null;
 
         [SerializeField]
-        private MyItemA[] m_arrayInField = null;
+        private MyItemA[] m_arrayInAField = null;
 
-        public MyInnerClass1 AnothField { get { return m_anothField; } } // to remove warnigs
-        public MyItemA[] ArrayInField { get { return m_arrayInField; } } // to remove warnigs
+        public MyInnerClass1 AnothField { get { return m_anotherField; } }
+        public MyItemA[] ArrayInAField { get { return m_arrayInAField; } }
     }
 
     [SerializeField]
@@ -55,10 +55,15 @@ public class MyBehaviorA : MonoBehaviour
     private List<MyItemA> m_listWithCustomDrawer = null;
 
     [SerializeField]
+    [Reorderable]
+    private List<float> m_listOfSimpleType = null;
+
+    [SerializeField]
     private MyInnerClass2 field = null;
 
-    public MyItemA[] ArrayWithAttribute { get { return m_arrayWithAttribute; } } // to remove warnigs
-    public MyItemA[] ArrayWithCustomDrawer { get { return m_arrayWithCustomDrawer; } } // to remove warnigs
-    public List<MyItemA> ListWithCustomDrawer { get { return m_listWithCustomDrawer; } } // to remove warnigs
-    public MyInnerClass2 PrivateField { get { return field; } } // to re move warnigs
+    public MyItemA[] ArrayWithAttribute { get { return m_arrayWithAttribute; } }
+    public MyItemA[] ArrayWithCustomDrawer { get { return m_arrayWithCustomDrawer; } }
+    public List<MyItemA> ListWithCustomDrawer { get { return m_listWithCustomDrawer; } }
+    public List<float> listOfSimpleType { get { return m_listOfSimpleType; } }
+    public MyInnerClass2 PrivateField { get { return field; } }
 }

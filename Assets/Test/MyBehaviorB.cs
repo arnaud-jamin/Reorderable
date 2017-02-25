@@ -5,16 +5,22 @@ using UnityEngine;
 public class MyBehaviorB : MyBehaviorA
 {
     [Serializable]
+    public class MyItemC
+    {
+        public string name;
+    }
+
+    [Serializable]
     public class MyItemB : MyItemA
     {
         [Range(0, 1)]
-        [SerializeField]
-        private float m_time;
+        public float time;
+
+        [Reorderable]
+        public MyItemC[] arrayInArray;
     }
 
     [Reorderable]
     [SerializeField]
-    private MyItemB[] anotherArrayWithAttribute = null;
-
-    public MyItemB[] AnotherArrayWithAttribute { get { return anotherArrayWithAttribute; } } // to remove warnigs
+    public MyItemB[] anotherArrayWithAttribute = null;
 }
