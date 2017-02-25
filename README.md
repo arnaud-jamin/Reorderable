@@ -1,6 +1,6 @@
 # Reorderable
 
-In Unity 3D reorderable list are prefered over the default array/list inspector. But to use reorderable list, it is required to create a custom editor. It is not always convenient to do so, because if forces to manage all the others properties of the object through the custom editor. This tool let you quickly get reorderable list by using a simple custom attribute, instead of having to create a custom editor. 
+In Unity 3D reorderable lists are usually prefered over the default array/list inspector for their ability to reorder elements using drag and drop. But to use reorderable lists, it is required to create a custom editor. It is not always convenient to do so, because it forces to manage all the others properties of the object through the custom editor. This tool lets you quickly get reorderable list by using a simple custom attribute instead of having to create a custom editor. 
 
 By adding the [Reorderable] attribute ...
 ```cs
@@ -8,7 +8,7 @@ By adding the [Reorderable] attribute ...
     public MyItem[] myArray;
 ```
 
-You get the following controls:
+You get the following controls (Drag and drop is not supported):
  - Move Up
  - Move Down
  - Move Top (Ctrl+Click on Move Up)
