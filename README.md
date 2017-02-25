@@ -16,11 +16,11 @@ You get the following controls (Drag and drop is not supported):
  - Add Element 
  - Remove Element 
 
-- **Collpased**:
+This is how the array looks when collpased:
 
 ![alt tag](https://cloud.githubusercontent.com/assets/13844285/23100455/1410a36e-f64f-11e6-8d53-19814474632f.png)
 
-- **Open**:
+When open:
 
 ![alt tag](https://cloud.githubusercontent.com/assets/13844285/23100244/25737f14-f64a-11e6-8c43-9717b01ced71.png)
 
