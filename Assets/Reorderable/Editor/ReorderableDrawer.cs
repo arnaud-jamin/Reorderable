@@ -81,37 +81,38 @@ public class ReorderableDrawer : PropertyDrawer
     /// <returns></returns>
     protected virtual void DrawElement(Rect propertyRect, Rect elementRect, SerializedProperty property, GUIContent label)
     {
-        var rect = m_info.isElementSimpleType ? elementRect : propertyRect;
+        var rect = m_info != null && m_info.isElementSimpleType ? elementRect : propertyRect;
         EditorGUI.PropertyField(rect, property, label, true);
     }
 
     // --------------------------------------------------------------------------------------------
     public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label)
     {
-        EditorGUI.BeginProperty(rect, label, property);
+        var content = EditorGUI.BeginProperty(rect, label, property);
 
         m_info = GetArrayFieldInfo(property);
-        if (m_info == null)
-            return;
 
-        var headerHeight = GetHeaderHeight(property, label);
+        var headerHeight = GetHeaderHeight(property, content);
 
         var elementRect = rect;
-        elementRect.y += (m_info.elementIndex == 0) ? headerHeight : 0;
+        elementRect.y += (m_info != null && m_info.elementIndex == 0) ? headerHeight : 0;
 
-        // Draw reorderable buttons first because we want to know their size, so the drawHeader 
-        // method can properly adjust the position of its content.
-        elementRect = DrawReorderableButtons(elementRect, property);
-
-        // Draw the header if it's the first element.
-        if (m_info.elementIndex == 0)
+        if (m_info != null)
         {
-            var headerRect = new Rect(elementRect.x, elementRect.y - headerHeight, elementRect.width, headerHeight);
-            DrawHeader(rect, headerRect, property, label);
-            elementRect.height -= headerHeight;
+            // Draw reorderable buttons first because we want to know their size, so the drawHeader 
+            // method can properly adjust the position of its content.
+            elementRect = DrawReorderableButtons(elementRect, property);
         }
 
-        DrawElement(rect, elementRect, property, label);
+        // Draw the header if it's the first element.
+        if (m_info != null && m_info.elementIndex == 0)
+        {
+            var headerRect = new Rect(elementRect.x, elementRect.y - headerHeight, elementRect.width, headerHeight);
+            DrawHeader(rect, headerRect, property, content);
+        }
+
+        elementRect.height = GetElementHeight(property, content);
+        DrawElement(rect, elementRect, property, content);
 
         EditorGUI.EndProperty();
     }
@@ -120,11 +121,8 @@ public class ReorderableDrawer : PropertyDrawer
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
         m_info = GetArrayFieldInfo(property);
-        if (m_info == null)
-            return 0;
-
         var height = GetElementHeight(property, label);
-        if (m_info.elementIndex == 0)
+        if (m_info != null && m_info.elementIndex == 0)
         {
             height += GetHeaderHeight(property, label);
         }
@@ -316,14 +314,14 @@ public class ReorderableDrawer : PropertyDrawer
     // --------------------------------------------------------------------------------------------
     protected static ArrayFieldInfo GetArrayFieldInfo(SerializedProperty property)
     {
-        // The property path can be something like : "myField.myFieldsArray1.Array.data[1].mySubField.myFieldsArray2.Array.data[3]"
+        // The property path should be something like : "myField.mySubField.myArray.Array.data[3]"
         var arrayPrefix = "Array.data[";
 
         var arrayPrefixIndex = property.propertyPath.LastIndexOf(arrayPrefix);
         if (arrayPrefixIndex < 0)
             return null;
 
-        // Find 3 in "myField.myFieldsArray1.Array.data[1].mySubField.myFieldsArray2.Array.data[3]"
+        // Find 3 in "myField.mySubField.myArray.Array.data[3]"
         var elementIndexStr = property.propertyPath.Substring(arrayPrefixIndex + arrayPrefix.Length, property.propertyPath.Length - arrayPrefixIndex - arrayPrefix.Length - 1);
         var elementIndex = -1;
         if (int.TryParse(elementIndexStr, out elementIndex) == false)
@@ -341,8 +339,6 @@ public class ReorderableDrawer : PropertyDrawer
         for (var i = 0; i < paths.Length; ++i)
         {
             var fieldName = paths[i];
-
-            // We can enounter multiple arrays
             bool isArray = instance is Array;
             bool isList = field != null && field.FieldType.IsGenericType && field.FieldType.GetGenericTypeDefinition() == typeof(List<>);
             if (isArray || isList)
@@ -390,11 +386,10 @@ public class ReorderableDrawer : PropertyDrawer
         }
 
         // We only support List and Arrays
-        var value = field.GetValue(instance);
         CollectionType collectionType;
         Type elementType;
 
-        if (value is Array)
+        if (field.FieldType.GetElementType() != null)
         {
             collectionType = CollectionType.Array;
             elementType = field.FieldType.GetElementType();

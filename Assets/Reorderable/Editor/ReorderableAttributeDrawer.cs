@@ -16,7 +16,7 @@ public class ReorderableAttributeDrawer : ReorderableDrawer
     // --------------------------------------------------------------------------------------------
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
-        var height = EditorGUI.GetPropertyHeight(property, label, true);
+        var height = base.GetPropertyHeight(property, label);
         height += (height > m_closedLineMaxHeight) ? m_bottomPaddingWhenOpened + m_verticalSpacingWhenOpened : m_verticalSpacingWhenClosed;
         return height;
     }
@@ -25,21 +25,20 @@ public class ReorderableAttributeDrawer : ReorderableDrawer
     public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label)
     {
         m_info = GetArrayFieldInfo(property);
-        if (m_info == null)
-            return;
 
         var reorderable = attribute as ReorderableAttribute;
-        m_showAdd = reorderable.showAdd;
-        m_showDelete = reorderable.showDelete;
-        m_showOrder = reorderable.showOrder;
-        m_showBox = reorderable.showBox;
-
-        EditorGUI.BeginProperty(rect, label, property);
+        if (reorderable != null)
+        {
+            m_showAdd = reorderable.showAdd;
+            m_showDelete = reorderable.showDelete;
+            m_showOrder = reorderable.showOrder;
+            m_showBox = reorderable.showBox;
+        }
 
         if (m_showBox)
         {
             var boxRect = rect;
-            var elementFoldoutX = (EditorGUI.indentLevel - (m_info.isElementSimpleType ? 0 : 1)) * m_indentationWidth;
+            var elementFoldoutX = (EditorGUI.indentLevel - (m_info != null && m_info.isElementSimpleType ? 0 : 1)) * m_indentationWidth;
             boxRect.x += elementFoldoutX;
             boxRect.width -= elementFoldoutX;
             boxRect.height -= (rect.height > m_closedLineMaxHeight) ? m_verticalSpacingWhenOpened : m_verticalSpacingWhenClosed;
@@ -47,10 +46,6 @@ public class ReorderableAttributeDrawer : ReorderableDrawer
             GUI.Box(boxRect, string.Empty);
             GUI.backgroundColor = Color.white;
         }
-
-        var headerRect = DrawReorderableButtons(rect, property);
-        DrawElement(rect, headerRect, property, label);
-
-        EditorGUI.EndProperty();
+        base.OnGUI(rect, property, label);
     }
 }
