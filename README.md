@@ -92,3 +92,7 @@ public class MyCustomDrawer : ReorderableDrawer
 }
 ```
 
+License
+-------
+
+Licensed under the MIT License, see LICENSE for more information.
